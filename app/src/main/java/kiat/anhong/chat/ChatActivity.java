@@ -88,16 +88,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "ff", Toast.LENGTH_SHORT).show();
             return;
         }
-        msgList.add(msg);
-        scrollToEnd(true);
-    }
-
-    private void scrollToEnd(boolean notify) {
-        int index = adapter.getItemCount() - 1;
-        if (notify) {
-            adapter.notifyItemInserted(index);
-        }
-        mRecyclerViewChat.scrollToPosition(index);
+        msgList.add(0, msg);
+        adapter.notifyItemInserted(0);
+        mRecyclerViewChat.scrollToPosition(0);
     }
 
     private void init() {
@@ -125,7 +118,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setWidget() {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
+        layoutManager.setReverseLayout(true);
         mRecyclerViewChat.setLayoutManager(layoutManager);
         mRecyclerViewChat.setAdapter(adapter);
         btnSend.setOnClickListener(this);
