@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Chat</string>
+
+    <!-- Manifest of Facebook -->
+    <string name="facebook_app_id">1921287918113127</string>
+    <string name="fb_login_protocol_scheme">fb1921287918113127</string>
+    <string name="description_profile">Show profile</string>
+    <string name="send_button">Send button</string>
+
+
+</resources>

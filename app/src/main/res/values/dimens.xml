@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_left_right_progress_bar">10dp</dimen>
+
+    <!-- message row item -->
+    <dimen name="vertical_margin">8dp</dimen>
+    <dimen name="profile_size">48dp</dimen>
+    <dimen name="margin_padding_small">6dp</dimen>
+    <dimen name="margin_padding_normal">15dp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_normal">14sp</dimen>
+    <dimen name="card_corner_radius">1dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="chat_height_size">48dp</dimen>
+
+    <!-- test fb -->
+    <dimen name="orca_message_other_user_right_padding">42.0dip</dimen>
+</resources>
