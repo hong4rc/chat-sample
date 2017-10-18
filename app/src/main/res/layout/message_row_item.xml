@@ -17,11 +17,11 @@
 
         <kiat.anhong.chat.model.RoundImageView
             android:id="@+id/imgAvatar"
-            app:isRound="true"
             android:layout_width="@dimen/profile_size"
             android:layout_height="@dimen/profile_size"
             android:layout_margin="@dimen/margin_padding_small"
-            android:contentDescription="@string/description_profile" />
+            android:contentDescription="@string/description_profile"
+            app:isRound="true" />
 
 
         <LinearLayout
@@ -29,8 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_padding_small"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/margin_padding_small">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvContent"

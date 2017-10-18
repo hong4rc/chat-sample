@@ -14,16 +14,18 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class LoadImageAsyncTask extends AsyncTask<String, Integer, Bitmap> {
+import kiat.anhong.chat.model.BitmapSave;
+
+class LoadImageAsyncTask extends AsyncTask<String, Integer, Bitmap> {
     private static final String TAG = "LoadImageAsyncTask";
 
     private String uid;
-    private AvatarImageUtils avatarImageUtils;
+    private BitmapSave bmSave;
     private static DBHelper dbHelper = DBHelper.getsInstance();
 
-    LoadImageAsyncTask(String uid, AvatarImageUtils avatarImageUtils) {
+    LoadImageAsyncTask(String uid, BitmapSave bmSave) {
         this.uid = uid;
-        this.avatarImageUtils = avatarImageUtils;
+        this.bmSave = bmSave;
     }
 
     @Override
@@ -46,11 +48,9 @@ public class LoadImageAsyncTask extends AsyncTask<String, Integer, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap bmp) {
         if (bmp != null) {
-            this.avatarImageUtils.put(uid, bmp);
+            this.bmSave.freeList(bmp);
             String imgB64 = AvatarImageUtils.encodeBitmap(bmp);
             dbHelper.getUserInfoRef().child(uid).child(DBHelper.IMG_B64).setValue(imgB64);
-
-
         }
     }
 }

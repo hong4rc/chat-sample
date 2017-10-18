@@ -4,7 +4,6 @@ package kiat.anhong.chat.adapter;
  * Created by Kiat on Oct 17
  */
 
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +13,17 @@ import android.widget.TextView;
 import java.util.List;
 
 import kiat.anhong.chat.R;
+import kiat.anhong.chat.model.BitmapSave;
+import kiat.anhong.chat.model.Message;
 import kiat.anhong.chat.model.RoundImageView;
 import kiat.anhong.chat.utils.AvatarImageUtils;
 import kiat.anhong.chat.utils.Utils;
-import kiat.anhong.chat.model.Message;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
     private List<Message> mMsgList;
-    public MessageAdapter(List<Message> msgList){
+
+    public MessageAdapter(List<Message> msgList) {
         this.mMsgList = msgList;
     }
 
@@ -39,11 +40,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         holder.tvContent.setText(msg.content);
         holder.tvTimeSend.setText(Utils.getDateDetail(msg.timeSend));
-        Bitmap bm = AvatarImageUtils.getInstance().get(msg.userUID);
-        if (bm == null){
-            AvatarImageUtils.loadImg(msg.userUID, holder.imgAvatar);
+        BitmapSave bmSave = AvatarImageUtils.getInstance().get(msg.userUID);
+        if (bmSave == null) {
+            //dont have
+            bmSave = new BitmapSave(msg.userUID);
+            bmSave.addImgView(holder.imgAvatar);
+            AvatarImageUtils.loadImg(msg.userUID);
+        } else {
+            if (bmSave.getBitmap() == null) {
+                //bitmap is loading
+                bmSave.addImgView(holder.imgAvatar);
+            } else {
+                holder.imgAvatar.setImageBitmap(bmSave.getBitmap());
+            }
         }
-        holder.imgAvatar.setImageBitmap(bm);
     }
 
     @Override

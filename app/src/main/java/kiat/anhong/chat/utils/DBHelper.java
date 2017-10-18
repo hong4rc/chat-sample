@@ -12,8 +12,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 
-import kiat.anhong.chat.model.UserInfo;
-
 public class DBHelper {
 
     public static final String USER_INFO = "user_info";
@@ -43,7 +41,5 @@ public class DBHelper {
         Uri photoUri = user.getPhotoUrl();
         assert photoUri != null;
         AvatarImageUtils.loadImg(user.getUid(), photoUri.toString());
-        UserInfo userInfo = new UserInfo(photoUri.toString());
-        this.getUserInfoRef().child(user.getUid() + "/" + DBHelper.IMG_B64).setValue(userInfo.imgB64);
     }
 }

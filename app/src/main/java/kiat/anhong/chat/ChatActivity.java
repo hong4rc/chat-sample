@@ -1,10 +1,10 @@
 package kiat.anhong.chat;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,8 +27,8 @@ import kiat.anhong.chat.model.Message;
 import kiat.anhong.chat.utils.DBHelper;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "ChatActivity";
 
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DatabaseReference msgRef;
     private DBHelper dbHelper;
@@ -45,6 +45,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Log.d(TAG, "onCreate: ");
 
         init();
         getWidget();
@@ -102,7 +103,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
         dbHelper = DBHelper.getsInstance();
         msgRef = dbHelper.getMsgListRef();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         try {
             dbHelper.updateUserInfo(mUser);

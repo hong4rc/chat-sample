@@ -1,7 +1,7 @@
 package kiat.anhong.chat.model;
 /*
  * Copyright (C) 2017 The KiaT Project
- * Created by Kiat on Oct 17
+ * Created by KiaT on Oct 17
  */
 
 import java.util.List;
