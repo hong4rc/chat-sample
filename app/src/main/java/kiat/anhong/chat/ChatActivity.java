@@ -15,7 +15,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +26,15 @@ import java.util.List;
 import kiat.anhong.chat.adapter.MessageAdapter;
 import kiat.anhong.chat.model.Message;
 import kiat.anhong.chat.utils.DBHelper;
+import kiat.anhong.chat.utils.TimeStamp;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ChatActivity";
+    private static final int NUM_LOAD_FIRST = 10;
+    private static final int NUM_LOAD_MORE = 5;
 
     private FirebaseUser mUser;
-    private DatabaseReference msgRef;
+    private Query msgQuery;
     private DBHelper dbHelper;
 
     private RecyclerView mRecyclerViewChat;
@@ -40,6 +44,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private List<Message> msgList;
     private MessageAdapter adapter;
     private LinearLayoutManager layoutManager;
+    private TimeStamp timeStamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +52,36 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
         Log.d(TAG, "onCreate: ");
 
+        timeStamp = TimeStamp.getInstance();
         init();
         getWidget();
         setWidget();
         listenDataChanged();
+        loadFirstData();
+    }
+
+    private void loadFirstData() {
+        msgQuery.limitToLast(NUM_LOAD_FIRST).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> msgIterable = dataSnapshot.getChildren();
+                for (DataSnapshot snapshot : msgIterable) {
+                    addMessage(snapshot, true);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void listenDataChanged() {
-        msgRef.orderByChild(DBHelper.TIME).addChildEventListener(new ChildEventListener() {
+        msgQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                addMessage(dataSnapshot);
+                addMessage(dataSnapshot, false);
 
             }
 
@@ -81,13 +105,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void addMessage(DataSnapshot dataSnapshot) {
+    private void addMessage(DataSnapshot dataSnapshot, boolean isInit) {
         Message msg = dataSnapshot.getValue(Message.class);
         assert msg != null;
         if (msg.content.equals("") || msg.userUID.equals("") || msg.timeSend == 0) {
             Toast.makeText(this, "ff", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!isInit && msg.timeSend < timeStamp.getTimeLast()) {
+            return;
+        }
+        timeStamp.setTimeLast(msg.timeSend);
         msgList.add(0, msg);
         adapter.notifyItemInserted(0);
         mRecyclerViewChat.scrollToPosition(0);
@@ -95,7 +123,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void init() {
         dbHelper = DBHelper.getsInstance();
-        msgRef = dbHelper.getMsgListRef();
+        msgQuery = dbHelper.getMsgListRef().orderByChild(DBHelper.TIME);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         try {
