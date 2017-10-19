@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
 
 import kiat.anhong.chat.R;
@@ -20,6 +23,8 @@ import kiat.anhong.chat.utils.AvatarImageUtils;
 import kiat.anhong.chat.utils.Utils;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
+    private static final int RIGHT_IMG_CHAT = 0;
+    private static final int LEFT_IMG_CHAT = 1;
 
     private List<Message> mMsgList;
 
@@ -30,7 +35,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.message_row_item, parent, false);
+        View view;
+        if (viewType == RIGHT_IMG_CHAT) {
+            view = inflater.inflate(R.layout.message_me_row_item, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.message_row_item, parent, false);
+        }
         return new MessageViewHolder(view);
     }
 
@@ -54,6 +64,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 holder.imgAvatar.setImageBitmap(bmSave.getBitmap());
             }
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        int itemType = LEFT_IMG_CHAT;
+        Message msg = mMsgList.get(position);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        if (user.getUid().equals(msg.userUID)) {
+            itemType = RIGHT_IMG_CHAT;
+        } else {
+            itemType = LEFT_IMG_CHAT;
+        }
+        return itemType;
     }
 
     @Override
